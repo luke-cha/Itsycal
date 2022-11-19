@@ -27,5 +27,6 @@ extern NSString * const kShowLocation;
 extern NSString * const kShowEventDots;
 extern NSString * const kUseColoredDots;
 extern NSString * const kBeepBeepOnTheHour;
+extern NSString * const kZoomJoinAlert;
 extern NSString * const kBaselineOffset;
 extern NSString * const kEnableMeetingButtonIndefinitely;

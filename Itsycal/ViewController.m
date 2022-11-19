@@ -22,6 +22,8 @@
 #import "MoUtils.h"
 #import "Sparkle/SUUpdater.h"
 
+@class _os_fmt_buf;
+
 @implementation ViewController
 {
     EventCenter   *_ec;
@@ -239,7 +241,7 @@
     // Confirm that there are calendars which can be modified.
     BOOL atLeastOneModifiableCalendar = NO;
     for (id obj in [_ec sourcesAndCalendars]) {
-        if ([obj isKindOfClass:[CalendarInfo class]] && 
+        if ([obj isKindOfClass:[CalendarInfo class]] &&
             ((CalendarInfo *)obj).calendar.allowsContentModifications) {
             atLeastOneModifiableCalendar = YES;
             break;
@@ -1094,6 +1096,71 @@
         NSSound *beepbeep = [NSSound soundNamed:@"beep"];
         [beepbeep setVolume:[self volumeRelativeToSystemVolumeWithCap:0.12]];
         [beepbeep play];
+    }
+    
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:kZoomJoinAlert]){
+        NSArray *todayEvents = [self datesAndEventsForDate:self.todayDate days:1];
+        if (todayEvents != nil) {
+            os_log(OS_LOG_DEFAULT, "Today: %ld-%ld-%ld %ld:%ld:%ld", [components year], [components month], [components day], [components hour], [components minute], [components second]);
+            for (int i = 0; i < [todayEvents count]; i++) {
+                if([todayEvents[i] isKindOfClass:[EventInfo class]]){
+                    EventInfo *eventInfo = todayEvents[i];
+                    
+                    os_log(OS_LOG_DEFAULT, "%@ %@", eventInfo.event.startDate, eventInfo.zoomURL);
+                    
+                    NSDateComponents *com = [[NSCalendar currentCalendar] components: NSCalendarUnitSecond| NSCalendarUnitMinute| NSCalendarUnitHour |NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:eventInfo.event.startDate];
+                    
+                    long year = [com year];
+                    long month = [com month];
+                    long day = [com day];
+                    long hour = [com hour];
+                    long minute = [com minute];
+                    long second = [com second];
+                    
+                    os_log(OS_LOG_DEFAULT, "Event Start: %ld-%ld-%ld %ld:%ld:%ld", year, month, day, hour, minute, second);
+//                    if( components.year == year && components.month == month && components.day == day){
+                    if( components.year == year && components.month == month && components.day == day && components.hour == hour && components.minute == minute ){
+                                                
+                        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                        [dateFormatter setDateFormat:@"HH:mm a"];
+                                                                        
+                        NSAlert* alert = [[NSAlert alloc] init];
+                                                                        
+                        alert.accessoryView = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 1500, 0)];
+                        
+                        NSArray* views = [[[alert window] contentView] subviews];
+                        
+                        alert.icon = [NSImage new];
+                        
+                        [[views objectAtIndex:4] setFont:[NSFont fontWithName:@"Helvetica Neue Bold" size:50]];
+                        [[views objectAtIndex:4] setTextColor:[NSColor whiteColor]];
+                        [[views objectAtIndex:4] setStringValue:[NSString stringWithFormat:@"%@\n\n", eventInfo.event.title]];
+                        
+                        [[views objectAtIndex:5] setFont:[NSFont fontWithName:@"Helvetica Neue Light" size:25]];
+                        [[views objectAtIndex:5] setTextColor:[NSColor whiteColor]];
+                        [[views objectAtIndex:5] setStringValue:[NSString stringWithFormat:@"%@ ~ %@\n\nLocation: %@\n\nDescription: %@\n\n\n", [dateFormatter stringFromDate:eventInfo.event.startDate], [dateFormatter stringFromDate:eventInfo.event.endDate], eventInfo.event.location, eventInfo.event.description]];
+                        
+                        alert.window.contentView.wantsLayer = true;
+                        alert.window.contentView.layer.backgroundColor = [NSColor colorWithCalibratedRed:(98/255.0f) green:(16/255.0f) blue:(204/255.0f) alpha:1.0].CGColor;
+                        [alert.window.contentView updateLayer];
+                        
+                        self.view.wantsLayer = true;
+                                                
+                        [alert addButtonWithTitle : @"Cancel"];
+                        NSButton *joinButton = [alert addButtonWithTitle:@"Join Zoom"];
+                        alert.window.defaultButtonCell = joinButton.cell;
+                        [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
+                        NSModalResponse choice = [alert runModal];
+                        int result = (int)choice;
+                        if(result == 1001){
+                            os_log(OS_LOG_DEFAULT, "Join");
+                            os_log(OS_LOG_DEFAULT, "zoomURL: %@", eventInfo.zoomURL);
+                            [NSWorkspace.sharedWorkspace openURL:eventInfo.zoomURL];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // Set up _timer to fire on next minute or second.

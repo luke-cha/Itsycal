@@ -33,6 +33,7 @@ static NSString * const kCalendarCellId = @"CalendarCell";
 {
     NSTextField *_title;
     NSButton *_login;
+    NSButton *_zoomJoinAlert;
     NSButton *_checkUpdates;
     NSButton *_beepBeep;
     NSPopUpButton *_firstDayPopup;
@@ -66,6 +67,7 @@ static NSString * const kCalendarCellId = @"CalendarCell";
     // Checkboxes
     _login = chkbx(NSLocalizedString(@"Launch at login", @""));
     _login.action = @selector(launchAtLogin:);
+    _zoomJoinAlert = chkbx(@"Show Zoom Join Alert");
     _checkUpdates = chkbx(NSLocalizedString(@"Automatically check for updates", @""));
     _beepBeep = chkbx(NSLocalizedString(@"Beep beep on the hour", @""));
 
@@ -129,11 +131,12 @@ static NSString * const kCalendarCellId = @"CalendarCell";
                                      NSLocalizedString(@"31 days", @"")]];
     [v addSubview:_agendaDaysPopup];
 
-    MoVFLHelper *vfl = [[MoVFLHelper alloc] initWithSuperview:v metrics:@{@"m": @20} views:NSDictionaryOfVariableBindings(_login, _checkUpdates, _beepBeep, firstDayLabel, _firstDayPopup, shortcutLabel, shortcutView, tvContainer, agendaDaysLabel, _agendaDaysPopup)];
-    [vfl :@"V:|-m-[_login]-[_checkUpdates]-[_beepBeep]-20-[_firstDayPopup]-20-[shortcutLabel]-3-[shortcutView(25)]-20-[tvContainer(170)]-[_agendaDaysPopup]-m-|"];
+    MoVFLHelper *vfl = [[MoVFLHelper alloc] initWithSuperview:v metrics:@{@"m": @20} views:NSDictionaryOfVariableBindings(_login, _checkUpdates, _zoomJoinAlert, _beepBeep, firstDayLabel, _firstDayPopup, shortcutLabel, shortcutView, tvContainer, agendaDaysLabel, _agendaDaysPopup)];
+    [vfl :@"V:|-m-[_login]-[_checkUpdates]-[_beepBeep]-[_zoomJoinAlert]-20-[_firstDayPopup]-20-[shortcutLabel]-3-[shortcutView(25)]-20-[tvContainer(170)]-[_agendaDaysPopup]-m-|"];
     [vfl :@"H:|-m-[_login]-(>=m)-|"];
     [vfl :@"H:|-m-[_checkUpdates]-(>=m)-|"];
     [vfl :@"H:|-m-[_beepBeep]-(>=m)-|"];
+    [vfl :@"H:|-m-[_zoomJoinAlert]-(>=m)-|"];
     [vfl :@"H:|-m-[firstDayLabel]-[_firstDayPopup]-(>=m)-|" :NSLayoutFormatAlignAllFirstBaseline];
     [vfl :@"H:|-(>=m)-[shortcutLabel]-(>=m)-|"];
     [vfl :@"H:|-m-[shortcutView(>=220)]-m-|"];
@@ -148,6 +151,9 @@ static NSString * const kCalendarCellId = @"CalendarCell";
     
     // Binding for hourly beep
     [_beepBeep bind:@"value" toObject:[NSUserDefaultsController sharedUserDefaultsController] withKeyPath:[@"values." stringByAppendingString:kBeepBeepOnTheHour] options:@{NSContinuouslyUpdatesValueBindingOption: @(YES)}];
+    
+    // Binding for zoom join alert
+    [_zoomJoinAlert bind:@"value" toObject:[NSUserDefaultsController sharedUserDefaultsController] withKeyPath:[@"values." stringByAppendingString:kZoomJoinAlert] options:@{NSContinuouslyUpdatesValueBindingOption: @(YES)}];
     
     // Bindings for first day of week
     [_firstDayPopup bind:@"selectedIndex" toObject:[NSUserDefaultsController sharedUserDefaultsController] withKeyPath:[@"values." stringByAppendingString:kWeekStartDOW] options:@{NSContinuouslyUpdatesValueBindingOption: @(YES)}];

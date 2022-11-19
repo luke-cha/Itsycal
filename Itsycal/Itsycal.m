@@ -26,5 +26,6 @@ NSString * const kShowLocation = @"ShowLocation";
 NSString * const kShowEventDots = @"kShowEventDots";
 NSString * const kUseColoredDots = @"UseColoredDots";
 NSString * const kBeepBeepOnTheHour = @"BeepBeepOnTheHour";
+NSString * const kZoomJoinAlert = @"kZoomJoinAlert";
 NSString * const kBaselineOffset = @"BaselineOffset";
 NSString * const kEnableMeetingButtonIndefinitely = @"EnableMeetingButtonIndefinitely";
