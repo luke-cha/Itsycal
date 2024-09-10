@@ -67,7 +67,7 @@ static NSString * const kCalendarCellId = @"CalendarCell";
     // Checkboxes
     _login = chkbx(NSLocalizedString(@"Launch at login", @""));
     _login.action = @selector(launchAtLogin:);
-    _zoomJoinAlert = chkbx(@"Show Zoom Join Alert");
+    _zoomJoinAlert = chkbx(@"Show Meeting Join Alert");
     _checkUpdates = chkbx(NSLocalizedString(@"Automatically check for updates", @""));
     _beepBeep = chkbx(NSLocalizedString(@"Beep beep on the hour", @""));
 

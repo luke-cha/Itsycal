@@ -1141,13 +1141,13 @@
                         [[views objectAtIndex:5] setStringValue:[NSString stringWithFormat:@"%@ ~ %@\n\nLocation: %@\n\n\n\n\n", [dateFormatter stringFromDate:eventInfo.event.startDate], [dateFormatter stringFromDate:eventInfo.event.endDate], eventInfo.event.location]];
                         
                         alert.window.contentView.wantsLayer = true;
-                        alert.window.contentView.layer.backgroundColor = [NSColor colorWithCalibratedRed:(98/255.0f) green:(16/255.0f) blue:(204/255.0f) alpha:1.0].CGColor;
+                        alert.window.contentView.layer.backgroundColor = [NSColor colorWithCalibratedRed:(3/255.0f) green:(155/255.0f) blue:(229/255.0f) alpha:1.0].CGColor;
                         [alert.window.contentView updateLayer];
                         
                         self.view.wantsLayer = true;
                                                 
                         [alert addButtonWithTitle : @"Cancel"];
-                        NSButton *joinButton = [alert addButtonWithTitle:@"Join Zoom"];
+                        NSButton *joinButton = [alert addButtonWithTitle:@"Join Meeting"];
                         alert.window.defaultButtonCell = joinButton.cell;
                         [[NSRunningApplication currentApplication] activateWithOptions:NSApplicationActivateIgnoringOtherApps];
                         NSModalResponse choice = [alert runModal];
